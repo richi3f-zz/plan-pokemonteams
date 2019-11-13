@@ -324,7 +324,7 @@ function loadType(typeData) {
         });
     });
     // Load Pokémon
-    $.getJSON('https://richi3f.github.io/pokemon-team-planner/static/pokemon.json', pokemonData => loadPokemon(pokemonData, typeData));
+    $.getJSON('http://plan.pokemonteams.io/static/pokemon.json', pokemonData => loadPokemon(pokemonData, typeData));
 }
 function filterPokemon() {
     $('#pokedex [data-pokemon]').addClass('filtered');
@@ -760,7 +760,7 @@ $(document).ready(function(){
         $dropdown.append(createCheckbox('gen', 'Generation ' + toRoman(i), i));
     }
     // Load types and Pokémon
-    $.getJSON('https://richi3f.github.io/pokemon-team-planner/static/types.json', loadType);
+    $.getJSON('http://plan.pokemonteams.io/static/types.json', loadType);
     $('#randomize').click(randomizeTeam);
     // Show/hide team's weaknesses
     $('#type-analysis .button').click(function(e) {

@@ -224,6 +224,10 @@ table caption::before {
     margin:0 0.5em 0 0;
     color:#ff2d17
 }
+#team-coverage caption::before {
+    content:"★";
+    color:#ffd400
+}
 #team-immunities caption::before {
     content:"╳";
     color:#4769b7
@@ -272,7 +276,7 @@ table caption::before {
     border-right: 4px solid transparent;
     border-left: 4px solid transparent;
     position: absolute;
-    top: .875em;
+    top: 1em;
     right: 1em;
 }
 .filter button:hover,
