@@ -83,6 +83,11 @@ h3{
 h3::after, h4::after{
   content:":"
 }
+#intro {
+    text-align:center;
+    font-size:.875em;
+    margin:0 10em 1.25rem
+}
 article{
     background-color:#f0f0f0;
     width:79.375em;
