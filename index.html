@@ -2,43 +2,82 @@
 
 <html lang="en">
 <head>
-    <title>Index</title>
-    <meta charset="utf-8">
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <title>Pokémon Team Planner</title>
+    <meta name="description" content="A team planner tool for the mainline Pokémon games.">
+	<meta charset="utf-8">
+	<link href="static/style8.css" rel="stylesheet">
+	<link href="static/favicon.ico"  rel="shortcut icon">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script>
-    (function() {
-        var dex = sessionStorage.getItem('dex');
-        var team = sessionStorage.getItem('team');
-        sessionStorage.removeItem('dex');
-        sessionStorage.removeItem('team');
-        if (!dex) {
-            dex = 'swsh';
-            team = location.hash.slice(1);
-        }
-        history.replaceState(null, null, location.origin + '/test/' + dex + '/#' + team);
-        console.log('Dex:' + dex);
-        console.log('Team:' + team);
-        $(document).ready(function(){
-            $('article').attr('data-slug', dex);
+        $(window).on('load', function () {
+            $("#loader").fadeOut("slow");
         });
-    })();
     </script>
 </head>
 
 <body>
-    <article data-slug="">
-        <ul>
-            <li><a href="#" data-slug="meowth-galar">Galarian Meowth</a></li>
-            <li><a href="#" data-slug="perrserker">Perrserker</a></li>
-            <li><a href="#" data-slug="stunfisk-galar">Galarian Stunfisk</a></li>
-        </ul>
-    </article>
-    <script>
-        $('a').click(function(e) {
-            e.preventDefault();
-            history.replaceState(null, null, location.origin + '/test/' + $('article').attr('data-slug') + '/#' + $(this).attr('data-slug'));
-        });
-    </script>
+
+<article data-pokedex='swsh'>
+	<div id="loader">
+        <img src="static/img/pokeball_load.png">
+	</div>
+	<h1 title="Pokémon Team Planner">Team Planner</h1>
+	<section id="team">
+		<h2>Your Team</h2>
+		<ul id="slots">
+			<li data-pokemon="" data-gen="" data-type="" draggable="true">
+				<figure>
+					<img class="art" src="static/img/blank.gif">
+				</figure>
+				<div class="info">
+					<span class="name">???</span>
+					<span class="type" data-slot="1" title="">???</span>
+					<span class="type" data-slot="2" title="">???</span>
+				</div>
+		</ul>
+        <a href="#" id="randomize" class="button" title="Randomize">?</a>
+		<div id="type-analysis">
+			<a href="#" class="button" title="Show more info">+</a>
+			<a href="#" class="button hidden" title="Hide detailed info">−</a>
+			<table id="team-coverage" class="hidden">
+                <caption>This Team Can Weaken</caption>
+				<tbody></tbody>
+			</table>
+            <table id="team-weaknesses" class="hidden">
+                <caption>This Team Is Weak Against</caption>
+				<tbody></tbody>
+			</table>
+            <table id="team-immunities" class="hidden">
+                <caption>This Team Is Immune To</caption>
+				<tbody></tbody>
+			</table>
+			<table id="team-resistances" class="hidden">
+                <caption>This Team Resists</caption>
+				<tbody></tbody>
+			</table>
+		</div>
+        <div id="copy-url">
+            <p>Click the "Copy" button to copy your team's URL to your clipboard and share it with your friends and neighbors!</p>
+            <input type="text" readonly><a class="button" data-clipboard-target="#copy-url input">Copy</a>
+        </div>
+	</section>
+	<section id="options">
+		<h2>Your options</h2>
+		<div id="filters"></div>
+		<ol id="pokedex"></ol>
+	</section>
+    <footer>
+		<p class="links">If you find this project useful, please consider making a <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6BN4HCG9SPW9J&source=url&lc=US">donation</a> to keep it alive.</p>
+        <p>Please report bugs or leave feedback in <a href="http://www.smogon.com/forums/threads/team-planner-for-pok%C3%A9mon-sun-moon.3585346/">this thread</a>.</p>
+        <p>
+            © of <a href="http://twitter.com/richi3f">richi3f</a>, <time datetime="2016">2016</time>-<time datetime="2019">2019</time><br>
+            <a href="https://clipboardjs.com">Clipboard.js</a> is © of <a href="http://zenorocha.com">Zeno Rocha</a>, <time datetime="2015">2015</time>-<time datetime="2019">2019</time><br>
+            Pokémon is © of Nintendo, <time datetime="1995">1995</time>-<time datetime="2019">2019</time>
+        </p>
+    </footer>
+</article>
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" type="text/javascript"></script>
+<script src="static/script8.js" type="text/javascript"></script>
 </body>
 </html>

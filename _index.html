@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <title>Index</title>
+    <meta charset="utf-8">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script>
+    (function() {
+        var dex = sessionStorage.getItem('dex');
+        var team = sessionStorage.getItem('team');
+        sessionStorage.removeItem('dex');
+        sessionStorage.removeItem('team');
+        if (!dex) {
+            dex = 'swsh';
+            team = location.hash.slice(1);
+        }
+        history.replaceState(null, null, location.origin + '/test/' + dex + '/#' + team);
+        console.log('Dex:' + dex);
+        console.log('Team:' + team);
+        $(document).ready(function(){
+            $('article').attr('data-slug', dex);
+        });
+    })();
+    </script>
+</head>
+
+<body>
+    <article data-slug="">
+        <ul>
+            <li><a href="#" data-slug="meowth-galar">Galarian Meowth</a></li>
+            <li><a href="#" data-slug="perrserker">Perrserker</a></li>
+            <li><a href="#" data-slug="stunfisk-galar">Galarian Stunfisk</a></li>
+        </ul>
+    </article>
+    <script>
+        $('a').click(function(e) {
+            e.preventDefault();
+            history.replaceState(null, null, location.origin + '/test/' + $('article').attr('data-slug') + '/#' + $(this).attr('data-slug'));
+        });
+    </script>
+</body>
+</html>
