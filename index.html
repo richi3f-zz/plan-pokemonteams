@@ -19,7 +19,9 @@
         history.replaceState(null, null, location.origin + '/test/' + dex + '/#' + team.join('+'));
         console.log('Dex:' + dex);
         console.log('Team:' + team.join(', '));
-        $('article').attr('data-slug', dex);
+        $(document).ready(function(){
+            $('article').attr('data-slug', dex);
+        });
     })();
     </script>
 </head>
