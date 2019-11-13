@@ -772,6 +772,12 @@ $(document).ready(function(){
     });
     // Set current URL
     $('#copy-url input').val(document.URL);
+    $('#take-screenshot').click(function(e) {
+        e.preventDefault();
+        html2canvas(document.querySelector('#slots')).then(canvas => {
+            window.open(canvas.toDataURL('image/png'), '_blank');
+        });
+    });
 });
 // Copy feature
 var clipboard = new ClipboardJS('#copy-url a');
