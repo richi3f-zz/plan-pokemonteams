@@ -12,12 +12,11 @@
         var team = sessionStorage.getItem('team');
         sessionStorage.removeItem('dex');
         sessionStorage.removeItem('team');
-        if (dex) {
-            history.replaceState(null, null, '/test/' + dex + '/#' + team.join('+'));
-        } else {
+        if (!dex) {
             dex = 'swsh';
             team = location.hash.slice(1).split('#');
         }
+        history.replaceState(null, null, location.origin + '/test/' + dex + '/#' + team.join('+'));
         console.log('Dex:' + dex);
         console.log('Team:' + team.join(', '));
         $('article').attr('data-slug', dex);
@@ -36,7 +35,7 @@
     <script>
         $('a').click(function(e) {
             e.preventDefault();
-            history.replaceState(null, null, '/test/' + $('article').attr('data-slug') + '/#' + $(this).attr('data-slug'));
+            history.replaceState(null, null, location.origin + '/test/' + $('article').attr('data-slug') + '/#' + $(this).attr('data-slug'));
         });
     </script>
 </body>
