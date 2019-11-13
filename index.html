@@ -13,7 +13,7 @@
         sessionStorage.removeItem('dex');
         sessionStorage.removeItem('team');
         if (dex) {
-            history.replaceState(null, null, '/' + dex + '/#' + team.join('+'));
+            history.replaceState(null, null, '/test/' + dex + '/#' + team.join('+'));
         } else {
             dex = 'swsh';
             team = location.hash.slice(1).split('#');
@@ -36,7 +36,7 @@
     <script>
         $('a').click(function(e) {
             e.preventDefault();
-            history.replaceState(null, null, '/' + $('article').attr('data-slug') + '/#' + $(this).attr('data-slug'));
+            history.replaceState(null, null, '/test/' + $('article').attr('data-slug') + '/#' + $(this).attr('data-slug'));
         });
     </script>
 </body>
