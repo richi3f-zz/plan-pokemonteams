@@ -16,7 +16,7 @@
             dex = 'swsh';
             team = location.hash.slice(1);
         }
-        history.replaceState(null, null, location.origin + '/test/' + dex + '/#' + team.join('+'));
+        history.replaceState(null, null, location.origin + '/test/' + dex + '/#' + team);
         console.log('Dex:' + dex);
         console.log('Team:' + team);
         $(document).ready(function(){
