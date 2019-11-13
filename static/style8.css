@@ -330,15 +330,17 @@ footer{
     font-size:.75em;
     text-align:right
 }
-.links{
+#donation{
     line-height: 1.25rem;
+    text-align: center
 }
-.links a{
+#bugs{text-align: center}
+#donation a{
     background: url(https://img.shields.io/badge/donation%20via-PayPal-blue.svg);
     display: inline-block;
     vertical-align: middle;
     text-indent: -999em;
-    direction: rtl;
+    direction: ltr;
     width: 7.875rem;
     height: 1.25rem;
 }

@@ -118,7 +118,6 @@ function changeCheckbox() {
         }
     }
     // Do the thing
-    
     filterPokemon();
     if (name == 'dex') {
         
@@ -308,7 +307,8 @@ function loadType(type_data) {
     $.each(type_data, function(type) {
         var name = capitalize(type);
         var $tr = $('<tr></tr>')
-            .attr('data-type', type);
+            .attr('data-type', type)
+            .attr('data-who', '');
         $tr.append($('<th data-slot="1">' + name + '</th>'));
         $tr.append($('<td>0</td>'));
         $tr.appendTo($('#team-immunities tbody'));
@@ -607,46 +607,86 @@ function removeFromTeam($this) {
     // Send slot to last place
     $("#slots").append($this);
     // Update stuff
-    updateTeamTypeAnalysis(pokemon, true);
+    updateTeamTypeAnalysis(pokemon, 'remove');
     updateTeamHash();
 }
 /**
  * Updates the team's type analysis.
  */
-function updateTeamTypeAnalysis(pokemon, remove) {
-    if (remove === undefined) {
-        remove = false;
+function updateTeamTypeAnalysis(pokemon, action) {
+    if (action === undefined) {
+        action = 'add';
+    }
+    if (action == 'ignore') {
+        return;
     }
     var $pokemon = $('#pokedex [data-pokemon="' + pokemon + '"]');
+    var name = $pokemon.attr('title');
     if ($pokemon.length < 1) {
         $pokemon = $('#pokedex [data-default="' + pokemon + '"]');
     }
     $pokemon.attr('data-coverage').split(',').forEach(
-        type => updateTeamTypeAnalysisTable(type, remove, '#team-coverage', 'Weak')
+        type => updateTeamTypeAnalysisTable(type, action, name, '#team-coverage', 
+            'hits ' + capitalize(type) + ' types with super effective with STAB damage!',
+            'hit ' + capitalize(type) + ' types with super effective with STAB damage!')
     );
     $pokemon.attr('data-weak2').split(',').forEach(
-        type => updateTeamTypeAnalysisTable(type, remove, '#team-weaknesses', 'Weak')
+        type => updateTeamTypeAnalysisTable(type, action, name, '#team-weaknesses',
+            'is weak to ' + capitalize(type) + ' types!',
+            'are weak to ' + capitalize(type) + ' types!')
     );
     $pokemon.attr('data-immune2').split(',').forEach(
-        type => updateTeamTypeAnalysisTable(type, remove, '#team-immunities', 'Immune')
+        type => updateTeamTypeAnalysisTable(type, action, name, '#team-immunities',
+        'is immune to ' + capitalize(type) + ' types!',
+        'are immune to ' + capitalize(type) + ' types!')
     );
     $pokemon.attr('data-resists').split(',').forEach(
-        type => updateTeamTypeAnalysisTable(type, remove, '#team-resistances', 'Resistant')
+        type => updateTeamTypeAnalysisTable(type, action, name, '#team-resistances',
+        'resists ' + capitalize(type) + ' types!',
+        'resist ' + capitalize(type) + ' types!')
     );
+}
+function prettyJoin(array) {
+    if (array.length == 1) {
+        return array[0];
+    } else if (array.length > 1) {
+        var oxford_comma = (array.length == 2) ? '' : ',';
+        return array.slice(0, -1).join(', ') + oxford_comma + ' and ' + array.pop();
+    }
+    return '';
 }
 /**
  * Updates the team's type analysis table.
  */
-function updateTeamTypeAnalysisTable(type, remove, table_id, adjective) {
+function updateTeamTypeAnalysisTable(type, action, contributor, table_id, text_singular, text_plural) {
+    if (!type) {
+        return;
+    }
     var $tr = $(table_id + ' [data-type="' + type + '"]');
-    // Get update current number of Pokémon
+    // Keep track of who is contributing
+    var who = $tr.attr('data-who');
+    if (who.length == 0 && action == 'add') {
+        who = [contributor];
+    } else {
+        who = who.split(',');
+        if (action == 'remove') {
+            who = who.filter(pokemon => pokemon !== contributor);
+        } else if (who.length > 0) {
+            who.push(contributor);
+        }
+    }
+    $tr.attr('data-who', who.join(','));
+    // Update current number of contributing Pokémon
     var $td = $tr.find('td');
     var num = parseInt($td.text());
-    num += remove ? -1 : 1;
+    num += (action == 'remove') ? -1 : 1;
     $td.text(num);
     // Update text
-    var verb = (num == 1) ? 'Is' : 'Are';
-    $tr.attr('title', num + ' Pokémon ' + verb + ' ' + adjective + ' to the ' + capitalize(type) + ' Type!');
+    var contributors = '';
+    if (who.length > 0) {
+        contributors = '(' + prettyJoin(who) + ') ';
+    }
+    $tr.attr('title', num + ' Pokémon ' + contributors + ((num == 1) ? text_singular : text_plural));
 }
 function makeTeamSlotDraggable($slot) {
     var dragSrcEl = null;
