@@ -14,11 +14,11 @@
         sessionStorage.removeItem('team');
         if (!dex) {
             dex = 'swsh';
-            team = location.hash.slice(1).split('#');
+            team = location.hash.slice(1);
         }
         history.replaceState(null, null, location.origin + '/test/' + dex + '/#' + team.join('+'));
         console.log('Dex:' + dex);
-        console.log('Team:' + team.join(', '));
+        console.log('Team:' + team);
         $(document).ready(function(){
             $('article').attr('data-slug', dex);
         });
