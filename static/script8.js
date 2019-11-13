@@ -774,8 +774,17 @@ $(document).ready(function(){
     $('#copy-url input').val(document.URL);
     $('#take-screenshot').click(function(e) {
         e.preventDefault();
-        html2canvas(document.querySelector('#slots')).then(canvas => {
-            window.open(canvas.toDataURL('image/png'), '_blank');
+        html2canvas(document.querySelector('#slots'), {
+            width: 1152,
+            height: 192
+        }).then(canvas => {
+            //document.body.appendChild(canvas);
+            var a = document.createElement('a');
+            a.href = canvas.toDataURL("image/png");
+            a.download = 'myfile.png';
+            a.click();
+            //window.open(canvas.toDataURL('image/png'), '_blank');
+
         });
     });
 });
