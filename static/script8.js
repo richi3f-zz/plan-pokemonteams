@@ -648,25 +648,7 @@ function updateTeamTypeAnalysisTable(type, remove, table_id, adjective) {
     var verb = (num == 1) ? 'Is' : 'Are';
     $tr.attr('title', num + ' Pokémon ' + verb + ' ' + adjective + ' to the ' + capitalize(type) + ' Type!');
 }
-/**
- * Updates the team's URL.
- */
-function updateTeamHash() {
-    var hashArray = [];
-    $('#slots li:not([data-pokemon=""])').each(function() {
-        hashArray.push($(this).attr('data-pokemon'));
-    });
-    window.location.hash = hashArray.join('+');
-    $("#copy-url input").val(document.URL);
-}
-$(document).ready(function(){
-    // Create team slots
-    var $team = $('#team #slots');
-    var $slot = $team.find('li');
-    $slot.click(function(e) {
-        removeFromTeam($(this));
-        e.preventDefault();
-    });
+function makeTeamSlotDraggable($slot) {
     var dragSrcEl = null;
     $slot.on('dragstart', function(e) {
         console.log('start');
@@ -704,6 +686,26 @@ $(document).ready(function(){
     });
     $slot.on('dragend', function() {
         console.log('end');
+    });
+}
+/**
+ * Updates the team's URL.
+ */
+function updateTeamHash() {
+    var hashArray = [];
+    $('#slots li:not([data-pokemon=""])').each(function() {
+        hashArray.push($(this).attr('data-pokemon'));
+    });
+    window.location.hash = hashArray.join('+');
+    $("#copy-url input").val(document.URL);
+}
+$(document).ready(function(){
+    // Create team slots
+    var $team = $('#team #slots');
+    var $slot = $team.find('li');
+    $slot.click(function(e) {
+        removeFromTeam($(this));
+        e.preventDefault();
     });
     for (let i = 0; i < 5; i++) {
         $slot.clone(true).appendTo($team);
