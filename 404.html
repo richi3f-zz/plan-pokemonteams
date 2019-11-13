@@ -2,12 +2,18 @@
 
 <html lang="en">
 <head>
-    <title>404 Test</title>
+    <title>404</title>
     <meta charset="utf-8">
 
     <script type="text/javascript">
-    console.log(location.pathname.split('/'));
+    const valid_dexes = ['lgpe', 'swsh'];
+
+    var path = location.pathname.split('/');
+    var i = path.findIndex((element) => valid_dexes.includes(element));
+
+    sessionStorage.setItem('dex', i >= 0 ? path[i] : valid_dexes.pop());
     </script>
+    <meta http-equiv="refresh" content="0;URL='/test'">
 </head>
 
 <body></body>
