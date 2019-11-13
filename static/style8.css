@@ -19,7 +19,7 @@
 body{
     background-color:#f0f0f0;
     font:16px/1.5 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    overflow-x: ;
+    overflow-x:hidden;
     overflow-y:scroll
 }
 body,a,a:hover,a:focus,caption{
