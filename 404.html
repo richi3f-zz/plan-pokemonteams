@@ -12,7 +12,7 @@
     var i = path.findIndex((element) => valid_dexes.includes(element));
 
     sessionStorage.setItem('dex', i >= 0 ? path[i] : valid_dexes.pop());
-    sessionStorage.setItem('team', location.hash.slice(1).split('+'));
+    sessionStorage.setItem('team', location.hash.slice(1));
     </script>
     <meta http-equiv="refresh" content="0;URL='/test'">
 </head>
