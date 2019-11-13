@@ -19,7 +19,6 @@
 body{
     background-color:#f0f0f0;
     font:16px/1.5 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    overflow-x:hidden;
     overflow-y:scroll
 }
 body,a,a:hover,a:focus,caption{
@@ -335,11 +334,12 @@ footer{
     line-height: 1.25rem;
 }
 .links a{
-    background: url(https://img.shields.io/badge/Donation-PayPal-blue.svg);
+    background: url(https://img.shields.io/badge/donation%20via-PayPal-blue.svg);
     display: inline-block;
     vertical-align: middle;
-    text-indent: 999em;
-    width: 6.625rem;
+    text-indent: -999em;
+    direction: rtl;
+    width: 7.875rem;
     height: 1.25rem;
 }
 /* Type Icons */
