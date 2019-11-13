@@ -184,14 +184,16 @@ article section{
     margin:2em 0 0
 }
 #copy-url input{
-    width:73.667em;
-    padding:.125em;
-    border:.0833em solid #dedede;
-    margin:0 .5em 0 0
+    width:93.5em;
+    padding:.1666667em;
+    border:1px solid #dedede;
+    margin:0 1em 0 0;
+    font: inherit;
+    line-height: inherit
 }
 #copy-url a{
     position:static;
-    width:5em
+    width:8em
 }
 /* Tables */
 #type-analysis {
