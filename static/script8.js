@@ -775,13 +775,14 @@ $(document).ready(function(){
     $('#take-screenshot').click(function(e) {
         e.preventDefault();
         html2canvas(document.querySelector('#slots'), {
+            backgroundColor: null,
             width: 1152,
             height: 192
         }).then(canvas => {
             //document.body.appendChild(canvas);
             var a = document.createElement('a');
             a.href = canvas.toDataURL("image/png");
-            a.download = 'myfile.png';
+            a.target = '_blank';
             a.click();
             //window.open(canvas.toDataURL('image/png'), '_blank');
 
