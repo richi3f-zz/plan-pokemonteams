@@ -747,6 +747,7 @@ $(document).ready(function(){
     // Create team slots
     var $team = $('#team #slots');
     var $slot = $team.find('li');
+    $slot.find('figure').wrap('<div class="wrap"></div>');
     $slot.click(function(e) {
         removeFromTeam($(this));
         e.preventDefault();
@@ -773,12 +774,13 @@ $(document).ready(function(){
     // Set current URL
     $('#copy-url input').val(document.URL);
     $('#take-screenshot').click(function(e) {
-        e.preventDefault();
+        $('#loader').show();
+        var num = $('#slots li:not([data-pokemon=""])').length;
         html2canvas(document.querySelector('#slots'), {
             backgroundColor: null,
-            width: 1152,
-            height: 192
+            width: 192*num
         }).then(canvas => {
+            $('#loader').fadeOut('slow');
             //document.body.appendChild(canvas);
             var a = document.createElement('a');
             a.href = canvas.toDataURL("image/png");
@@ -787,6 +789,7 @@ $(document).ready(function(){
             //window.open(canvas.toDataURL('image/png'), '_blank');
 
         });
+        e.preventDefault();
     });
 });
 // Copy feature
