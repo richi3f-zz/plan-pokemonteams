@@ -6,14 +6,25 @@
     <meta name="description" content="A team planner tool for the mainline Pokémon games.">
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=1310, initial-scale=1">
-	<link href="static/style8.css" rel="stylesheet">
-	<link href="static/favicon.ico"  rel="shortcut icon">
+	<link rel="stylesheet" href="static/style8.css">
+	<link rel="shortcut icon" href="static/favicon.ico">
+	<link rel="prefetch" href="static/img/art_gen1.png">
+	<link rel="prefetch" href="static/img/art_gen2.png">
+	<link rel="prefetch" href="static/img/art_gen3.png">
+	<link rel="prefetch" href="static/img/art_gen4.png">
+	<link rel="prefetch" href="static/img/art_gen5.png">
+	<link rel="prefetch" href="static/img/art_gen6.png">
+	<link rel="prefetch" href="static/img/art_gen7.png">
+	<link rel="prefetch" href="static/img/art_gen8.png">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script>
         $(window).on('load', function () {
             $('#loader').fadeOut('slow');
         });
-    </script>
+	</script>
+	<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" type="text/javascript"></script>
+	<!--<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.5/dist/html2canvas.min.js" type="text/javascript"></script>-->
+	<script src="static/script8.js" type="text/javascript"></script>
 </head>
 
 <body>
@@ -21,14 +32,6 @@
 <article data-pokedex='swsh'>
 	<div id="loader">
         <img src="static/img/pokeball_load.png">
-        <img src="static/img/art_gen1.png" class="hidden">
-        <img src="static/img/art_gen2.png" class="hidden">
-        <img src="static/img/art_gen3.png" class="hidden">
-        <img src="static/img/art_gen4.png" class="hidden">
-        <img src="static/img/art_gen5.png" class="hidden">
-        <img src="static/img/art_gen6.png" class="hidden">
-        <img src="static/img/art_gen7.png" class="hidden">
-        <img src="static/img/art_gen8.png" class="hidden">
         <img src="static/img/ms_gen8.png" class="hidden">
 	</div>
 	<h1 title="Pokémon Team Planner">Team Planner</h1>
@@ -47,7 +50,7 @@
 				</div>
 		</ul>
         <a href="#" id="randomize" class="button" title="Randomize">?</a>
-        <a href="#" id="take-screenshot" class="button" title="Take a screenshot">Take a screenshot</a>
+        <!--<a href="#" id="take-screenshot" class="button" title="Take a screenshot!">Take a screenshot!</a>-->
 		<div id="type-analysis">
 			<a href="#" class="button" title="Show more info">+</a>
 			<a href="#" class="button hidden" title="Hide detailed info">−</a>
@@ -89,8 +92,5 @@
     </footer>
 </article>
 
-<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" type="text/javascript"></script>
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.5/dist/html2canvas.min.js" type="text/javascript"></script>
-<script src="static/script8.js" type="text/javascript"></script>
 </body>
 </html>

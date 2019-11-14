@@ -455,7 +455,7 @@ function randomizeTeam(e) {
  * Adds a Pokémon to the team.
  */
 function addToTeam(who, position) {
-    var $this = (typeof $this === 'string') ? $('#pokedex [data-pokemon="' + $this + '"]') : who;
+    var $this = (typeof who === 'string') ? $('#pokedex [data-pokemon="' + who + '"]') : who;
     var pokemon = $this.attr('data-pokemon');
     if (!pokemon || $this.hasClass('unobtainable')) {
         return;
@@ -499,7 +499,7 @@ function addToTeam(who, position) {
  * Removes a Pokémon from the team.
  */
 function removeFromTeam($this) {
-    var $this = (typeof $this === 'string') ? $('#slots [data-pokemon="' + $this + '"]') : who;
+    var $this = (typeof who === 'string') ? $('#pokedex [data-pokemon="' + who + '"]') : who;
     var pokemon = $this.attr('data-pokemon');
     if (!pokemon) {
         return;
@@ -723,7 +723,7 @@ $(document).ready(function(){
     });
     // Set current URL
     $('#copy-url input').val(document.URL);
-    $('#take-screenshot').click(function(e) {
+    /* $('#take-screenshot').click(function(e) {
         $('#loader').fadeIn();
         var num = $('#slots li:not([data-pokemon=""])').length;
         html2canvas(document.querySelector('#slots'), {
@@ -744,7 +744,7 @@ $(document).ready(function(){
 
         });
         e.preventDefault();
-    });
+    }); */
 });
 // Copy feature
 var clipboard = new ClipboardJS('#copy-url a');
