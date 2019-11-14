@@ -774,7 +774,7 @@ $(document).ready(function(){
     // Set current URL
     $('#copy-url input').val(document.URL);
     $('#take-screenshot').click(function(e) {
-        $('#loader').show();
+        $('#loader').fadeIn();
         var num = $('#slots li:not([data-pokemon=""])').length;
         html2canvas(document.querySelector('#slots'), {
             backgroundColor: null,
@@ -784,8 +784,11 @@ $(document).ready(function(){
             //document.body.appendChild(canvas);
             var a = document.createElement('a');
             a.href = canvas.toDataURL("image/png");
-            a.download = 'myteam.png';
-            a.target = '_blank';
+            if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+                a.download = 'myteam.png';
+            } else {
+                a.target = '_blank';
+            }
             a.click();
             //window.open(canvas.toDataURL('image/png'), '_blank');
 
