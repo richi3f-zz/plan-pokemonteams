@@ -62,7 +62,8 @@ h1::before{
     vertical-align: top;
 }
 h2{
-    background-color:#f0f0f0;
+    background:#f0f0f0;
+    background:linear-gradient(0deg, rgba(246,246,246,1) 50%, rgba(240,240,240,1) 50%);
     color:#4d6ad8;
     font-size:1.5em;
     font-weight:700;
@@ -93,6 +94,8 @@ article{
     margin:1em auto
 }
 article section{
+    background: #f6f6f6;
+    border-radius: 1em;
     border:0.0625em solid #dedede;
     padding:1.25em 1em 1em;
     margin:0 0 1.25em;
@@ -274,7 +277,7 @@ table caption::before {
     cursor: pointer;
     border:1px solid #d9d9d9
 }
-.filter button::after{
+.filter:not(.disabled) button::after{
     display: inline-block;
     width:0;
     height:0;
@@ -287,7 +290,8 @@ table caption::before {
     right: 1em;
 }
 .filter button:hover,
-.filter.active button{
+.filter.active button,
+.filter.disabled button{
     background:#e6e6e6
 }
 .filter:not(.active) .dropdown-menu{
