@@ -498,8 +498,8 @@ function addToTeam(who, position) {
 /**
  * Removes a Pokémon from the team.
  */
-function removeFromTeam($this) {
-    var $this = (typeof who === 'string') ? $('#pokedex [data-pokemon="' + who + '"]') : who;
+function removeFromTeam(who) {
+    var $this = (typeof who === 'string') ? $('#slots [data-pokemon="' + who + '"]') : who;
     var pokemon = $this.attr('data-pokemon');
     if (!pokemon) {
         return;
