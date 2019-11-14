@@ -69,6 +69,18 @@ function toRoman(number) {
     return roman;
 }
 /**
+ * Joins an array in a pretty human-readable format. Example: '1, 2, 3, and 4'
+ */
+function prettyJoin(array) {
+    if (array.length == 1) {
+        return array[0];
+    } else if (array.length > 1) {
+        var oxfordComma = (array.length == 2) ? '' : ',';
+        return array.slice(0, -1).join(', ') + oxfordComma + ' and ' + array.pop();
+    }
+    return '';
+}
+/**
  * Handles the 'change' event on checkboxes.
  */
 function changeCheckbox() {
@@ -110,20 +122,19 @@ function changeCheckbox() {
         $button.text('All selected');
     } else {
         if ($checked.length == 0) {
-            $button.text('None selected');
+            $button.text('None Selected');
         } else if ($checked.length == 1) {
             $button.text($('label[for="' + $checked.attr('id') + '"]').text());
         } else {
-            $button.text($checked.length + ' selected');
+            $button.text($checked.length + ' Selected');
         }
     }
     // Do the thing
-    filterPokemon();
     if (name == 'dex') {
-        
+        setUnobtanaiblePokemon($this.val());
+        $button.parent().removeClass('active');
+    } else {
         filterPokemon();
-        // setUnobtanaiblePokemon($this.val());
-        // $button.parent().removeClass('active');
     }
 }
 /**
@@ -131,6 +142,9 @@ function changeCheckbox() {
  */
 function deployDropdown() {
     var $parent = $(this).parent();
+    if ($parent.hasClass('disabled')) {
+        return;
+    }
     var hasClass = $parent.hasClass('active');
     $('.filter').each(function() {
         $(this).removeClass('active');
@@ -172,6 +186,7 @@ function createFilter(type, name, inclSelectAll=true) {
         $dropdown.append(createCheckbox(type, 'Select all', 'all'));
     }
     var $div = $('<div></div>')
+        .attr('data-type', type)
         .addClass('filter');
     $('<label></gpabel>')
         .attr('for', type + '-filter')
@@ -226,6 +241,7 @@ function loadPokemon(pokemonData, typeData) {
             .text(pokemonData[i].name);
         var version = pokemonData[i].ver || 'sword,shield';
         var evolution = pokemonData[i].nfe ? 'nfe' : 'fe';
+        var tag = pokemonData[i].cat ? pokemonData[i].cat : 'nonlegend';
         var $li = $('<li></li>')
             .attr('data-id', pokemonData[i].id)
             .attr('data-pokemon', i)
@@ -238,6 +254,7 @@ function loadPokemon(pokemonData, typeData) {
             .attr('data-weak2', weak2)
             .attr('data-coverage', coverage)
             .attr('data-dex', pokemonData[i].dex['swsh'])
+            .attr('data-tag', tag)
             .attr('title', pokemonData[i].name);
         if (parseInt(pokemonData[i].dex['swsh']) > 400) {
             $li.addClass('unobtainable');
@@ -263,7 +280,7 @@ function loadPokemon(pokemonData, typeData) {
                 $this.attr('data-pokemon', 'wishiwashi-school');
             }
             handle = setInterval(function() {
-                $this.toggleClass("up");
+                $this.toggleClass('up');
             }, 150);
         }, function() {
             var $this = $(this);
@@ -271,18 +288,20 @@ function loadPokemon(pokemonData, typeData) {
             if (battleOnlyForms.includes($this.attr('data-pokemon'))) {
                 $this.attr('data-pokemon', $this.attr('data-default'))
             }
-            $this.removeClass("up");
+            $this.removeClass('up');
             clearInterval(handle);
         });
         $pokedex.append($li);
+        if (pokemonData[i].giga) {
+            $li = $li.clone(true);
+            $li.attr('data-pokemon', i + '-giga');
+            $li.attr('data-evolution', 'fe');
+            $li.attr('data-version', pokemonData[i].giga);
+            $li.attr('data-gen', '8');
+            $li.attr('data-tag', 'giga');
+            $pokedex.append($li);
+        }
     });
-    $dropdown = createFilter('evolution', 'Evolution');
-    $dropdown.append(createCheckbox('evolution', 'Not Fully Evolved', 'nfe'));
-    $dropdown.append(createCheckbox('evolution', 'Fully Evolved', 'fe'));
-    $dropdown = createFilter('version', 'Version');
-    $dropdown.append(createCheckbox('version', 'Both', 'sword,shield'));
-    $dropdown.append(createCheckbox('version', 'Sword', 'sword'));
-    $dropdown.append(createCheckbox('version', 'Shield', 'shield'));
     // Update current team with Pokémon from URL
     if (window.location.hash) {
         // Add Pokémon to team
@@ -302,7 +321,8 @@ function loadPokemon(pokemonData, typeData) {
  */
 function loadType(typeData) {
     // Create type filter
-    $dropdown = createFilter('type', 'Type');
+    var $typeDropdown = $('.filter[data-type="type"] .dropdown-menu');
+    var $excludeDropdown = $('.filter[data-type="exclude-type"] .dropdown-menu');
     // Populate team type analysis tables
     $.each(typeData, function(type) {
         var name = capitalize(type);
@@ -315,7 +335,8 @@ function loadType(typeData) {
         $tr.clone().appendTo($('#team-resistances tbody'));
         $tr.clone().appendTo($('#team-weaknesses tbody'));
         $tr.clone().appendTo($('#team-coverage tbody'));
-        $dropdown.append(createCheckbox('type', name, type));
+        $typeDropdown.append(createCheckbox('type', name, type));
+        $excludeDropdown.append(createCheckbox('exclude-type', name, type, false));
         typeData[type].weakens = []; var i = 0;
         $.each(typeData, function(defendingType) {
             if (typeData[defendingType].weak2.includes(type)) {
@@ -337,6 +358,10 @@ function filterPokemon() {
     $('#type-filter + .dropdown-menu .active input:not([value="all"])').each(function() {
         types[i++] = $(this).val();
     });
+    var excludedTypes = []; i = 0;
+    $('#exclude-type-filter + .dropdown-menu .active input:not([value="all"])').each(function() {
+        excludedTypes[i++] = $(this).val();
+    });
     var evolutions = []; i = 0;
     $('#evolution-filter + .dropdown-menu .active input:not([value="all"])').each(function() {
         evolutions[i++] = $(this).val();
@@ -345,166 +370,51 @@ function filterPokemon() {
     $('#version-filter + .dropdown-menu .active input:not([value="all"])').each(function() {
         versions[i++] = $(this).val();
     });
+    var tags = []; i = 0;
+    $('#tag-filter + .dropdown-menu .active input:not([value="all"])').each(function() {
+        tags[i++] = $(this).val();
+    });
+    var query = $("#search-bar").val().toLowerCase();
     $('#pokedex li').each(function() {
         var $this = $(this);
         var type = $this.attr('data-type').split(',');
-        if (gens.includes($this.attr('data-gen')) &&
-            (types.includes(type[0]) || (type[1] && types.includes(type[1]))) &&
+        var hasType = types.includes(type[0]) || (type[1] && types.includes(type[1]));
+        var hasExcludedType = excludedTypes.includes(type[0]) || (type[1] && excludedTypes.includes(type[1]));
+        var matchesQuery = query.length == 0 || $this.attr('title').toLowerCase().indexOf(query) >= 0 || $this.attr('data-pokemon').toLowerCase().indexOf(query) >= 0;
+        if (matchesQuery && (
+            gens.includes($this.attr('data-gen')) &&
             evolutions.includes($this.attr('data-evolution')) &&
-            versions.includes($this.attr('data-version'))
+            versions.includes($this.attr('data-version')) &&
+            tags.includes($this.attr('data-tag')) &&
+            hasType && !hasExcludedType)
         ) {
             $this.removeClass('filtered');
         } else {
             $this.addClass('filtered');
         }
     });
-    console.log(versions)
 }
 /**
  * Adds the unobtainable class to Pokémon that cannot be caught in the current dex.
  */
 function setUnobtanaiblePokemon(dex) {
-    alert('d');
     $('article[data-pokedex]').attr('data-pokedex', dex);
     // Hide/Show Pokémon from Pokédex
     $('#pokedex li').each(function() {
         var $this = $(this);
         if (parseInt($this.attr('data-dex-' + dex)) > 0) {
-            $this.removeClass("unobtainable");
+            $this.removeClass('unobtainable');
         } else {
-            $this.addClass("unobtainable");
+            $this.addClass('unobtainable');
+            if ($this.hasClass('picked')) {
+                removeFromTeam($this.attr('data-pokemon'));
+            }
         }
     });
     // Sort Pokédex
     $('#pokedex').sortChildren((a, b) => parseInt(a.getAttribute('data-dex-' + dex)) > parseInt(b.getAttribute('data-dex-' + dex)) ? 1 : -1);
-    // Remove from team
-    $('#slots [data-pokemon]:not([data-pokemon=""])').each(function() {
-        var $this = $(this);
-        if ($('#pokedex [data-pokemon="' + $this.attr('data-pokemon') + '"]').hasClass('unobtainable')) {
-            removeFromTeam($this);
-        }
-    });
     updateTeamHash();
     return;
-
-    // hide all Pokémon
-    $("ol.picker li").addClass("filtered");
-    // get selected generations
-    var gens = []; var i = 0;
-    $("#gen-filter option:selected").each(function() {
-        gens[i++] = "." + $(this).val();
-    });
-    // get selected islands
-    var islands = []; i = 0;
-    $("#island-filter option:selected").each(function() {
-        islands[i++] = "." + $(this).val();
-    });
-    // get selected types
-    var types = []; i = 0;
-    $("#type-filter option:selected").each(function() {
-        var type = $(this).val();
-        types[i++] = "." + type + "1";
-        types[i++] = "." + type + "2";
-    });
-    // get selected resistances
-    var resistances = []; i = 0;
-    $("#resistance-filter option:selected").each(function() {
-        resistances[i++] = ".immune2-" + $(this).val();
-        resistances[i++] = ".resists-" + $(this).val();
-    });
-    // get selected areas
-    var areas = []; i = 0;
-    $("#area-filter option:selected").each(function() {
-        areas[i++] = "." + $(this).val();
-    });
-    // get regional dex
-    var isAlolaDex = $("#alola-dex").length > 0 || $("#new-alola-dex").length > 0;
-    var isKalosDex = $("#kalos-dex").length > 0;
-    var isHoennDex = $("#hoenn-dex").length > 0;
-    // get selected versions
-    var includePkmnFromBothVersions = $("#version-filter [value=both]:selected").length > 0;
-    // get evolution filters
-    var includeNotFullyEvolvedPkmn = $("#evolution-filter [value=nfe]:selected").length > 0;
-    var includeFullyEvolvedPkmn = $("#evolution-filter [value=fe]:selected").length > 0;
-    var includeMegas = $("#evolution-filter [value=mega]:selected").length > 0;
-    // show Pokémon that have at least one class of each array (generations, types, resistances, islands)
-    $("ol.picker li").each(function() {
-        var $this = $(this);
-        var name = $this.attr("title").toLowerCase();
-        var query = $("#search-bar").val().toLowerCase();
-        if (name.indexOf(query) == -1) return;
-        if ($this.is(gens.join(',')) &&
-           ($this.is(islands.join(',')) || !isAlolaDex) &&
-           ($this.is(areas.join(',')) || !isKalosDex) &&
-           ($this.is(types.join(',')) &&
-            $this.is(resistances.join(',')))) {
-            // filter by version
-            if (isAlolaDex) {
-                var includePkmnFromSun = $("#version-filter [value=sun]:selected").length > 0;
-                var includePkmnFromMoon = $("#version-filter [value=moon]:selected").length > 0;
-                if (($this.hasClass("sun") && !includePkmnFromSun) ||
-                    ($this.hasClass("moon") && !includePkmnFromMoon) ||
-                    (!$this.hasClass("sun") && !$this.hasClass("moon") && !includePkmnFromBothVersions)) {
-                    return;
-                }
-            }
-            if (isKalosDex) {
-                var includePkmnFromX = $("#version-filter [value=x]:selected").length > 0;
-                var includePkmnFromY = $("#version-filter [value=y]:selected").length > 0;
-                if (($this.hasClass("x") && !includePkmnFromX) ||
-                    ($this.hasClass("y") && !includePkmnFromY) ||
-                    (!$this.hasClass("x") && !$this.hasClass("y") && !includePkmnFromBothVersions)) {
-                    return;
-                }
-            }
-            if (isHoennDex) {
-                var includePkmnFromOmegaRuby = $("#version-filter [value=ruby]:selected").length > 0;
-                var includePkmnFromAlphaSapphire = $("#version-filter [value=sapphire]:selected").length > 0;
-                if (($this.hasClass("ruby") && !includePkmnFromOmegaRuby) ||
-                    ($this.hasClass("sapphire") && !includePkmnFromAlphaSapphire) ||
-                    (!$this.hasClass("ruby") && !$this.hasClass("sapphire") && !includePkmnFromBothVersions)) {
-                    return;
-                }
-            }
-            // check if Pokémon is tagged as NFE
-            if ($this.hasClass("nfe")) {
-                // if it is, check if filter is on
-                if (!includeNotFullyEvolvedPkmn) {
-                    return;
-                }
-            }
-            else
-            {
-                // else, check if Pokémon is mega
-                if ($this.children(":first").attr("class").includes("-mega")) {
-                    // if it is, check if filter is on
-                    if (!includeMegas) {
-                        return;
-                    }
-                }
-                // if it is not a mega, check if FE filter is on
-                else if (!includeFullyEvolvedPkmn) {
-                    return;
-                }
-            }
-            // check if it is Silvally or Arceus, display only Normal Type when all types are selected
-            if (!$this.hasClass("normal1") && ($this.children(":first").hasClass("arceus") || $this.children(":first").hasClass("silvally")) && types.length >= 36) {
-                return;
-            }
-            $(this).removeClass("filtered");
-        }
-    });
-    // hide header if there are no Pokémon to show
-    $("h4 + ol.picker").each(function() {
-        var $this = $(this);
-        var children = $this.children("li").length;
-        var filteredChildren = $this.children("li.filtered").length;
-        if (children == filteredChildren) {
-            $this.prev().addClass("hidden");
-        } else {
-            $this.prev().removeClass("hidden");
-        }
-    });
 }
 /**
  * Returns a random number.
@@ -517,21 +427,24 @@ function getRandomNumber(upperBound) {
  */
 function randomizeTeam(e) {
     e.preventDefault();
+    // Clear search bar
+    if ($('#search-bar').val().length > 0) {
+        $('#search-bar').val('');
+        filterPokemon();
+    }
     // Clear current team
     $('#slots [data-pokemon]').each(function() {
         removeFromTeam($(this));
     });
+    // Select Pokémon that can be obtained in the current, are not filtered out and are not already picked
     var $filteredPkmn = $('#pokedex [data-pokemon]:not(.unobtainable):not(.filtered):not(.picked)');
-    if ($filteredPkmn.length > 0)
-    {
+    if ($filteredPkmn.length > 0) {
         var teamSize = 6;
         // If there are less than 6 available Pokémon, use that number
-        if ($filteredPkmn.length < teamSize)
-        {
+        if ($filteredPkmn.length < teamSize) {
             teamSize = $filteredPkmn.length;
         }
-        for (let i = 0; i < teamSize; i++)
-        {
+        for (let i = 0; i < teamSize; i++) {
             var randomNumber = getRandomNumber($filteredPkmn.length) - 1;
             addToTeam($filteredPkmn.eq(randomNumber));
             $filteredPkmn = $('#pokedex [data-pokemon]:not(.unobtainable):not(.filtered):not(.picked)');
@@ -541,7 +454,8 @@ function randomizeTeam(e) {
 /**
  * Adds a Pokémon to the team.
  */
-function addToTeam($this, position) {
+function addToTeam(who, position) {
+    var $this = (typeof $this === 'string') ? $('#pokedex [data-pokemon="' + $this + '"]') : who;
     var pokemon = $this.attr('data-pokemon');
     if (!pokemon || $this.hasClass('unobtainable')) {
         return;
@@ -552,7 +466,7 @@ function addToTeam($this, position) {
         position = -1;
     }
     var name = $this.attr('title')
-    // Find first empty slot
+    // Find first empty slot (or specific slot if position was given)
     var $slot = (position >= 0) ? $('#slots').children().eq(position) : $('#slots [data-pokemon=""]').first();
     // If there is no empty slot, remove Pokemon on first slot
     if ($slot.length <= 0) {
@@ -585,12 +499,13 @@ function addToTeam($this, position) {
  * Removes a Pokémon from the team.
  */
 function removeFromTeam($this) {
+    var $this = (typeof $this === 'string') ? $('#slots [data-pokemon="' + $this + '"]') : who;
     var pokemon = $this.attr('data-pokemon');
     if (!pokemon) {
         return;
     }
     // Make Pokémon visible again
-    $('#pokedex [data-pokemon="' + pokemon +  '"]').removeClass("picked");
+    $('#pokedex [data-pokemon="' + pokemon +  '"]').removeClass('picked');
     // Reset slot
     $this.attr('data-pokemon', '');
     $this.attr('data-type', '');
@@ -605,7 +520,7 @@ function removeFromTeam($this) {
         .attr('title', '')
         .text('');
     // Send slot to last place
-    $("#slots").append($this);
+    $('#slots').append($this);
     // Update stuff
     updateTeamTypeAnalysis(pokemon, 'remove');
     updateTeamHash();
@@ -645,15 +560,6 @@ function updateTeamTypeAnalysis(pokemon, action) {
         'resists ' + capitalize(type) + ' types!',
         'resist ' + capitalize(type) + ' types!')
     );
-}
-function prettyJoin(array) {
-    if (array.length == 1) {
-        return array[0];
-    } else if (array.length > 1) {
-        var oxfordComma = (array.length == 2) ? '' : ',';
-        return array.slice(0, -1).join(', ') + oxfordComma + ' and ' + array.pop();
-    }
-    return '';
 }
 /**
  * Updates the team's type analysis table.
@@ -741,7 +647,54 @@ function updateTeamHash() {
     } else {
         window.location.hash = teamMembers.join('+');
     }
-    $("#copy-url input").val(document.URL);
+    $('#copy-url input').val(document.URL);
+}
+function createFilters() {
+    // Dex
+    var $dropdown = createFilter('dex', 'Game', false);
+    $dropdown.parent().addClass('disabled');
+    $dropdown.append(createCheckbox('dex', 'Sword & Shield', 'swsh', true, true));
+    $('#dex-filter').text('Sword & Shield');
+    // Type
+    createFilter('type', 'Type');
+    // Evolution
+    $dropdown = createFilter('evolution', 'Evolution');
+    $dropdown.append(createCheckbox('evolution', 'Not Fully Evolved', 'nfe'));
+    $dropdown.append(createCheckbox('evolution', 'Fully Evolved', 'fe'));
+    // Generation
+    $dropdown = createFilter('gen', 'Generation');
+    for (let i = 1; i <= 8; i++) {
+        $dropdown.append(createCheckbox('gen', 'Generation ' + toRoman(i), i));
+    }
+    // Version
+    $dropdown = createFilter('version', 'Version');
+    $dropdown.append(createCheckbox('version', 'Both', 'sword,shield'));
+    $dropdown.append(createCheckbox('version', 'Sword', 'sword'));
+    $dropdown.append(createCheckbox('version', 'Shield', 'shield'));
+    // Exclude Type
+    $dropdown = createFilter('exclude-type', 'Exclude Type');
+    $dropdown.find('.active').removeClass('active').find('input').prop('checked', false);
+    $('#exclude-type-filter').text('None Selected');
+    // Category
+    $dropdown = createFilter('tag', 'Tag');
+    $dropdown.append(createCheckbox('tag', 'Non-Legendary', 'nonlegend'));
+    $dropdown.append(createCheckbox('tag', 'Sub-Legendary', 'sublegend'));
+    $dropdown.append(createCheckbox('tag', 'Legendary', 'legend'));
+    $dropdown.append(createCheckbox('tag', 'Gigantamax', 'giga'));
+    var $div = $('<div></div>')
+        .attr('data-type', 'name')
+        .addClass('filter');
+    $('<label></label>')
+        .attr('for', 'search-bar')
+        .text('Search')
+        .appendTo($div);
+    $('<input />')
+        .attr('id', 'search-bar')
+        .attr('type', 'search')
+        .attr('placeholder', 'by Pokémon name')
+        .on('input', filterPokemon)
+        .appendTo($div);
+    $('#filters').append($div);
 }
 $(document).ready(function(){
     // Create team slots
@@ -756,10 +709,7 @@ $(document).ready(function(){
         $slot.clone(true).appendTo($team);
     }
     // Create filters
-    $dropdown = createFilter('gen', 'Generation');
-    for (let i = 1; i <= 8; i++) {
-        $dropdown.append(createCheckbox('gen', 'Generation ' + toRoman(i), i));
-    }
+    createFilters();
     // Load types and Pokémon
     $.getJSON('http://plan.pokemonteams.io/static/types.json', loadType);
     $('#randomize').click(randomizeTeam);
@@ -783,8 +733,8 @@ $(document).ready(function(){
             $('#loader').fadeOut('slow');
             //document.body.appendChild(canvas);
             var a = document.createElement('a');
-            a.href = canvas.toDataURL("image/png");
-            if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+            a.href = canvas.toDataURL('image/png');
+            if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
                 a.download = 'myteam.png';
             } else {
                 a.target = '_blank';
@@ -799,9 +749,9 @@ $(document).ready(function(){
 // Copy feature
 var clipboard = new ClipboardJS('#copy-url a');
 clipboard.on('success', function() {
-    var $button = $("#copy-url a");
-    $button.text("Copied!");
+    var $button = $('#copy-url a');
+    $button.text('Copied!');
     setTimeout(function() {
-        $button.text("Copy");
+        $button.text('Copy');
     }, 3000);
 });

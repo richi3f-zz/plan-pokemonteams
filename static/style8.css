@@ -266,7 +266,7 @@ table caption::before {
     font-weight: 700;
     line-height: 2em;
 }
-.filter button{
+.filter button, #search-bar{
     width:10.5rem;
     border:none;
     padding:0.375rem 0.1875rem;
@@ -294,6 +294,9 @@ table caption::before {
 .filter.disabled button{
     background:#e6e6e6
 }
+.filter.disabled button{
+    cursor: auto;
+}
 .filter:not(.active) .dropdown-menu{
     display:none
 }
@@ -311,8 +314,8 @@ table caption::before {
     border: 1px solid #d9d9d9;
     background: #fff;
 }
-#type-filter + .dropdown-menu,
-.dropdown-menu li label[for='filter-type-all']{
+.filter[data-type$=type] .dropdown-menu,
+.filter[data-type$=type] .dropdown-menu li label[for$=all]{
     width:21rem
 }
 .dropdown-menu li{
@@ -341,6 +344,9 @@ table caption::before {
     left: .5em;
     top: .375em;
     font-size: inherit;
+}
+#search-bar{
+    cursor: text;
 }
 /* Footer */
 footer{
