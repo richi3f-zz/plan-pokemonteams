@@ -345,7 +345,7 @@ function loadType(typeData) {
         });
     });
     // Load Pokémon
-    $.getJSON('http://plan.pokemonteams.io/static/pokemon.json', pokemonData => loadPokemon(pokemonData, typeData));
+    $.getJSON('https://plan.pokemonteams.io/static/pokemon.json', pokemonData => loadPokemon(pokemonData, typeData));
 }
 function filterPokemon() {
     $('#pokedex [data-pokemon]').addClass('filtered');
@@ -711,7 +711,7 @@ $(document).ready(function(){
     // Create filters
     createFilters();
     // Load types and Pokémon
-    $.getJSON('http://plan.pokemonteams.io/static/types.json', loadType);
+    $.getJSON('https://plan.pokemonteams.io/static/types.json', loadType);
     $('#randomize').click(randomizeTeam);
     // Show/hide team's weaknesses
     $('#type-analysis .button').click(function(e) {
