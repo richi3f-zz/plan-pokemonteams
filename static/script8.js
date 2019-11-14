@@ -784,6 +784,7 @@ $(document).ready(function(){
             //document.body.appendChild(canvas);
             var a = document.createElement('a');
             a.href = canvas.toDataURL("image/png");
+            a.download = 'myteam.png';
             a.target = '_blank';
             a.click();
             //window.open(canvas.toDataURL('image/png'), '_blank');
