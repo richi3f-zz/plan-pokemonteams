@@ -222,10 +222,10 @@ function loadPokemon(pokemonData, typeData) {
                 difference(typeData[type2].resists, typeData[type1].weak2),
             );
             // Weaknesses are the union of the difference between each type's weaknesses and resistances
-            weak2 = union(
+            weak2 = difference(union(
                 difference(typeData[type1].weak2, typeData[type2].resists),
                 difference(typeData[type2].weak2, typeData[type1].resists),
-            );
+            ), immune2);
             // STAB coverage is the union of the types weakened by each type
             coverage = union(typeData[type1].weakens, typeData[type2].weakens);
         } else {
