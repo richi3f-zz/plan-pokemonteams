@@ -241,7 +241,7 @@ function loadPokemon(pokemonData, typeData) {
             .text(pokemonData[i].name);
         var version = pokemonData[i].ver || 'sword,shield';
         var evolution = pokemonData[i].nfe ? 'nfe' : 'fe';
-        var tag = pokemonData[i].cat ? pokemonData[i].cat : 'nonlegend';
+        var tag = (pokemonData[i].tag && pokemonData[i].tag != 'baby') ? pokemonData[i].tag : 'nonlegend';
         var $li = $('<li></li>')
             .attr('data-id', pokemonData[i].id)
             .attr('data-pokemon', i)
