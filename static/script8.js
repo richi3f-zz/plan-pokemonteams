@@ -256,7 +256,7 @@ function loadPokemon(pokemonData, typeData) {
             .attr('data-dex', pokemonData[i].dex['swsh'])
             .attr('data-tag', tag)
             .attr('title', pokemonData[i].name);
-        if (parseInt(pokemonData[i].dex['swsh']) > 400) {
+        if (parseInt(pokemonData[i].dex['swsh']) > 401) {
             $li.addClass('unobtainable');
         }
         $li.append($a);
