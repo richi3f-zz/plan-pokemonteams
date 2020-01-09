@@ -1022,6 +1022,8 @@ footer{
 [data-pokemon=alcremie-giga] img{background-position:-0px -2112px}
 [data-pokemon=copperajah-giga] img{background-position:-192px -2112px}
 [data-pokemon=duraludon-giga] img{background-position:-384px -2112px}
+[data-pokemon=slowpoke-galar] img{background-position:-576px -2112px}
+
 /* Pokémon menu sprites */
 #pokedex{width:76.5em}
 #pokedex li{
@@ -1550,3 +1552,4 @@ footer{
 [data-pokemon=alcremie-giga] .ms{background-position:-1088px -1288px}
 [data-pokemon=copperajah-giga] .ms{background-position:-1156px -1288px}
 [data-pokemon=duraludon-giga] .ms{background-position:-1224px -1288px}
+[data-pokemon=slowpoke-galar] .ms{background-position:-1292px -1288px}
