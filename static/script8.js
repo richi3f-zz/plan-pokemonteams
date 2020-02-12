@@ -256,9 +256,9 @@ function loadPokemon(pokemonData, typeData) {
             .attr('data-dex', pokemonData[i].dex['swsh'])
             .attr('data-tag', tag)
             .attr('title', pokemonData[i].name);
-        if (parseInt(pokemonData[i].dex['swsh']) > 401) {
+        /* if (parseInt(pokemonData[i].dex['swsh']) > 401) {
             $li.addClass('unobtainable');
-        }
+        } */
         $li.append($a);
         $li.click(function(e) {
             addToTeam($(this));
