@@ -204,8 +204,24 @@ function createFilter(type, name, inclSelectAll=true) {
 /**
  * Loads Pokémon data.
  */
+
+const DEXES = [ 'galar', 'armor', 'foreign' ];
+const DEX_NAMES = [ 'Galar', 'Isle of Armor', 'Pokémon HOME' ]
+
 function loadPokemon(pokemonData, typeData) {
-    var $pokedex = $('#pokedex');
+    var $dex_container = $('#dex-container');
+    for (let i = 0; i < DEXES.length; i++) {
+        $('<li></li>')
+            .appendTo($dex_container)
+            .append(
+                $('<h3></h3').text( DEX_NAMES[i] )
+            )
+            .append(
+                $('<ol></ol>')
+                    .attr('id', DEXES[i])
+                    .addClass('pokedex')
+            );
+    }
     $.each(pokemonData, function(i) {
         var type1 = pokemonData[i].type[0];
         var type2 = pokemonData[i].type.length == 1 ? null : pokemonData[i].type[1];
@@ -242,6 +258,8 @@ function loadPokemon(pokemonData, typeData) {
         var version = pokemonData[i].ver || 'sword,shield';
         var evolution = pokemonData[i].nfe ? 'nfe' : 'fe';
         var tag = (pokemonData[i].tag && pokemonData[i].tag != 'baby') ? pokemonData[i].tag : 'nonlegend';
+        var dex = (pokemonData[i].dex.armor && !pokemonData[i].dex.galar) ? 'armor' : ( pokemonData[i].dex.galar <= 400 ? 'galar' : 'foreign' );
+        var dex_no = pokemonData[i].dex.galar || pokemonData[i].dex.armor;
         var $li = $('<li></li>')
             .attr('data-id', pokemonData[i].id)
             .attr('data-pokemon', i)
@@ -253,12 +271,9 @@ function loadPokemon(pokemonData, typeData) {
             .attr('data-resists', resists)
             .attr('data-weak2', weak2)
             .attr('data-coverage', coverage)
-            .attr('data-dex', pokemonData[i].dex['swsh'])
+            .attr('data-dex', dex_no)
             .attr('data-tag', tag)
             .attr('title', pokemonData[i].name);
-        /* if (parseInt(pokemonData[i].dex['swsh']) > 401) {
-            $li.addClass('unobtainable');
-        } */
         $li.append($a);
         $li.click(function(e) {
             addToTeam($(this));
@@ -291,8 +306,8 @@ function loadPokemon(pokemonData, typeData) {
             $this.removeClass('up');
             clearInterval(handle);
         });
-        $pokedex.append($li);
-        if (pokemonData[i].giga) {
+        $('#' + dex).append($li);
+        /* if (pokemonData[i].giga) {
             $li = $li.clone(true);
             $li.attr('data-pokemon', i + '-giga');
             $li.attr('data-evolution', 'fe');
@@ -300,18 +315,18 @@ function loadPokemon(pokemonData, typeData) {
             $li.attr('data-gen', '8');
             $li.attr('data-tag', 'giga');
             $pokedex.append($li);
-        }
+        } */
     });
     // Update current team with Pokémon from URL
     if (window.location.hash) {
         // Add Pokémon to team
         window.location.hash.substring(1).split('+').forEach(function(pokemon) {
-            addToTeam($('#pokedex [data-pokemon="' + pokemon + '"]'));
+            addToTeam($('.pokedex [data-pokemon="' + pokemon + '"]'));
         });
         updateTeamHash();
     }
     // Sort Pokémon
-    $('#pokedex').sortChildren((a, b) =>
+    $('.pokedex').sortChildren((a, b) =>
         parseInt(a.getAttribute('data-dex')) - parseInt(b.getAttribute('data-dex')) ||
         parseInt(a.getAttribute('id')) - parseInt(b.getAttribute('id'))
     );
@@ -348,7 +363,7 @@ function loadType(typeData) {
     $.getJSON('https://plan.pokemonteams.io/static/pokemon.json', pokemonData => loadPokemon(pokemonData, typeData));
 }
 function filterPokemon() {
-    $('#pokedex [data-pokemon]').addClass('filtered');
+    $('.pokedex [data-pokemon]').addClass('filtered');
     // get selected generations
     var gens = []; var i = 0;
     $('#gen-filter + .dropdown-menu .active input:not([value="all"])').each(function() {
@@ -375,7 +390,7 @@ function filterPokemon() {
         tags[i++] = $(this).val();
     });
     var query = $("#search-bar").val().toLowerCase();
-    $('#pokedex li').each(function() {
+    $('.pokedex li').each(function() {
         var $this = $(this);
         var type = $this.attr('data-type').split(',');
         var hasType = types.includes(type[0]) || (type[1] && types.includes(type[1]));
@@ -393,6 +408,14 @@ function filterPokemon() {
             $this.addClass('filtered');
         }
     });
+    $('.pokedex').each(function() {
+        var $this = $(this);
+        if ( ($this.children().length - $this.children('.filtered').length) == 0) {
+            $this.parent().addClass('hidden');
+        } else {
+            $this.parent().removeClass('hidden');
+        }
+    });
 }
 /**
  * Adds the unobtainable class to Pokémon that cannot be caught in the current dex.
@@ -400,7 +423,7 @@ function filterPokemon() {
 function setUnobtanaiblePokemon(dex) {
     $('article[data-pokedex]').attr('data-pokedex', dex);
     // Hide/Show Pokémon from Pokédex
-    $('#pokedex li').each(function() {
+    $('.pokedex li').each(function() {
         var $this = $(this);
         if (parseInt($this.attr('data-dex-' + dex)) > 0) {
             $this.removeClass('unobtainable');
@@ -412,7 +435,7 @@ function setUnobtanaiblePokemon(dex) {
         }
     });
     // Sort Pokédex
-    $('#pokedex').sortChildren((a, b) => parseInt(a.getAttribute('data-dex-' + dex)) > parseInt(b.getAttribute('data-dex-' + dex)) ? 1 : -1);
+    $('.pokedex').sortChildren((a, b) => parseInt(a.getAttribute('data-dex-' + dex)) > parseInt(b.getAttribute('data-dex-' + dex)) ? 1 : -1);
     updateTeamHash();
     return;
 }
@@ -437,7 +460,7 @@ function randomizeTeam(e) {
         removeFromTeam($(this));
     });
     // Select Pokémon that can be obtained in the current, are not filtered out and are not already picked
-    var $filteredPkmn = $('#pokedex [data-pokemon]:not(.unobtainable):not(.filtered):not(.picked)');
+    var $filteredPkmn = $('.pokedex [data-pokemon]:not(.unobtainable):not(.filtered):not(.picked)');
     if ($filteredPkmn.length > 0) {
         var teamSize = 6;
         // If there are less than 6 available Pokémon, use that number
@@ -447,7 +470,7 @@ function randomizeTeam(e) {
         for (let i = 0; i < teamSize; i++) {
             var randomNumber = getRandomNumber($filteredPkmn.length) - 1;
             addToTeam($filteredPkmn.eq(randomNumber));
-            $filteredPkmn = $('#pokedex [data-pokemon]:not(.unobtainable):not(.filtered):not(.picked)');
+            $filteredPkmn = $('.pokedex [data-pokemon]:not(.unobtainable):not(.filtered):not(.picked)');
         }
     }
 }
@@ -455,7 +478,7 @@ function randomizeTeam(e) {
  * Adds a Pokémon to the team.
  */
 function addToTeam(who, position) {
-    var $this = (typeof who === 'string') ? $('#pokedex [data-pokemon="' + who + '"]') : who;
+    var $this = (typeof who === 'string') ? $('.pokedex [data-pokemon="' + who + '"]') : who;
     var pokemon = $this.attr('data-pokemon');
     if (!pokemon || $this.hasClass('unobtainable')) {
         return;
@@ -505,7 +528,7 @@ function removeFromTeam(who) {
         return;
     }
     // Make Pokémon visible again
-    $('#pokedex [data-pokemon="' + pokemon +  '"]').removeClass('picked');
+    $('.pokedex [data-pokemon="' + pokemon +  '"]').removeClass('picked');
     // Reset slot
     $this.attr('data-pokemon', '');
     $this.attr('data-type', '');
@@ -535,10 +558,10 @@ function updateTeamTypeAnalysis(pokemon, action) {
     if (action == 'ignore') {
         return;
     }
-    var $pokemon = $('#pokedex [data-pokemon="' + pokemon + '"]');
+    var $pokemon = $('.pokedex [data-pokemon="' + pokemon + '"]');
     var name = $pokemon.attr('title');
     if ($pokemon.length < 1) {
-        $pokemon = $('#pokedex [data-default="' + pokemon + '"]');
+        $pokemon = $('.pokedex [data-default="' + pokemon + '"]');
     }
     $pokemon.attr('data-coverage').split(',').forEach(
         type => updateTeamTypeAnalysisTable(type, action, name, '#team-coverage', 
@@ -620,11 +643,11 @@ function makeTeamSlotDraggable($slot) {
             var source = $(dragSrcEl).attr('data-pokemon');
             var target = $(this).attr('data-pokemon');
             addToTeam(
-                $('#pokedex [data-pokemon="' + source + '"]'),
+                $('.pokedex [data-pokemon="' + source + '"]'),
                 $('#slots [data-pokemon]').index(this)
             );
             addToTeam(
-                $('#pokedex [data-pokemon="' + target + '"]'),
+                $('.pokedex [data-pokemon="' + target + '"]'),
                 $('#slots [data-pokemon]').index(dragSrcEl)
             );
         }
@@ -680,7 +703,7 @@ function createFilters() {
     $dropdown.append(createCheckbox('tag', 'Non-Legendary', 'nonlegend'));
     $dropdown.append(createCheckbox('tag', 'Sub-Legendary', 'sublegend'));
     $dropdown.append(createCheckbox('tag', 'Legendary', 'legend'));
-    $dropdown.append(createCheckbox('tag', 'Gigantamax', 'giga'));
+    // $dropdown.append(createCheckbox('tag', 'Gigantamax', 'giga'));
     var $div = $('<div></div>')
         .attr('data-type', 'name')
         .addClass('filter');
