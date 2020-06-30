@@ -307,15 +307,19 @@ function loadPokemon(pokemonData, typeData) {
             clearInterval(handle);
         });
         $('#' + dex).append($li);
-        /* if (pokemonData[i].giga) {
+        if (pokemonData[i].gmax) {
             $li = $li.clone(true);
-            $li.attr('data-pokemon', i + '-giga');
+            if ( pokemonData[i].name == 'Toxtricity' ) {
+                $li.attr('data-pokemon', 'toxtricity-gmax');
+            } else {
+                $li.attr('data-pokemon', i + '-gmax');
+            }
             $li.attr('data-evolution', 'fe');
-            $li.attr('data-version', pokemonData[i].giga);
+            $li.attr('data-version', pokemonData[i].gmax);
             $li.attr('data-gen', '8');
-            $li.attr('data-tag', 'giga');
-            $pokedex.append($li);
-        } */
+            $li.attr('data-tag', 'gmax');
+            $('#' + dex).append($li);
+        }
     });
     // Update current team with Pokémon from URL
     if (window.location.hash) {
@@ -703,7 +707,7 @@ function createFilters() {
     $dropdown.append(createCheckbox('tag', 'Non-Legendary', 'nonlegend'));
     $dropdown.append(createCheckbox('tag', 'Sub-Legendary', 'sublegend'));
     $dropdown.append(createCheckbox('tag', 'Legendary', 'legend'));
-    // $dropdown.append(createCheckbox('tag', 'Gigantamax', 'giga'));
+    $dropdown.append(createCheckbox('tag', 'Gigantamax', 'gmax'));
     var $div = $('<div></div>')
         .attr('data-type', 'name')
         .addClass('filter');
