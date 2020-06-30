@@ -569,8 +569,8 @@ function updateTeamTypeAnalysis(pokemon, action) {
     }
     $pokemon.attr('data-coverage').split(',').forEach(
         type => updateTeamTypeAnalysisTable(type, action, name, '#team-coverage', 
-            'hits ' + capitalize(type) + ' types with super effective with STAB damage!',
-            'hit ' + capitalize(type) + ' types with super effective with STAB damage!')
+            'hits ' + capitalize(type) + ' types with super effective STAB damage!',
+            'hit ' + capitalize(type) + ' types with super effective STAB damage!')
     );
     $pokemon.attr('data-weak2').split(',').forEach(
         type => updateTeamTypeAnalysisTable(type, action, name, '#team-weaknesses',
