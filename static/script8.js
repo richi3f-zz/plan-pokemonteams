@@ -707,6 +707,7 @@ function createFilters() {
     $dropdown.append(createCheckbox('tag', 'Non-Legendary', 'nonlegend'));
     $dropdown.append(createCheckbox('tag', 'Sub-Legendary', 'sublegend'));
     $dropdown.append(createCheckbox('tag', 'Legendary', 'legend'));
+    $dropdown.append(createCheckbox('tag', 'Mythical', 'event'));
     $dropdown.append(createCheckbox('tag', 'Gigantamax', 'gmax'));
     var $div = $('<div></div>')
         .attr('data-type', 'name')
