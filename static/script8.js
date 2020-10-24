@@ -375,7 +375,7 @@ function loadType(typeData) {
         });
     });
     // Load Pokémon
-    $.getJSON('static/pokemon.json', pokemonData => loadPokemon(pokemonData, typeData));
+    $.getJSON('https://raw.githubusercontent.com/richi3f/plan-pokemonteams/test/static/pokemon.json', pokemonData => loadPokemon(pokemonData, typeData));
 }
 function filterPokemon() {
     $('.pokedex [data-pokemon]').addClass('filtered');
