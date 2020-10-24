@@ -1,4 +1,4 @@
-const battleOnlyForms = ['cherrim-sunshine', 'aegislash-blade', 'wishiwashi-school'];
+const battleOnlyForms = ['cherrim-sunshine', 'aegislash-blade', 'xerneas-active', 'wishiwashi-school'];
 const clickOutsideDropdownMenuListener = (e) => {
     $target = $(e.target);
     if (!$target.closest('.filter.active :not(label)').length) {

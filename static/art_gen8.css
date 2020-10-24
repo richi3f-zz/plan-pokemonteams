@@ -512,8 +512,9 @@
 [data-pokemon=yveltal] img{background-position:-192px -1152px}
 [data-pokemon=zygarde] img{background-position:-384px -1152px}
 [data-pokemon=zygarde-10] img{background-position:-576px -1152px}
-[data-pokemon=diancie] img{background-position:-768px -1152px}
-[data-pokemon=volcanion] img{background-position:-960px -1152px}
+[data-pokemon=zygarde-complete] img{background-position:-768px -1152px}
+[data-pokemon=diancie] img{background-position:-960px -1152px}
+[data-pokemon=volcanion] img{background-position:-1152px -1152px}
 [data-pokemon=raichu-alola] img{background-position:0 0}
 [data-pokemon=sandshrew-alola] img{background-position:-192px 0}
 [data-pokemon=sandslash-alola] img{background-position:-384px 0}
