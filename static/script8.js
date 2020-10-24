@@ -301,6 +301,9 @@ function loadPokemon(pokemonData, typeData) {
             } else if ($this.attr('data-pokemon') == 'aegislash') {
                 $this.attr('data-default', 'aegislash');
                 $this.attr('data-pokemon', 'aegislash-blade');
+            } else if ($this.attr('data-pokemon') == 'xerneas') {
+                $this.attr('data-default', 'xerneas');
+                $this.attr('data-pokemon', 'xerneas-active');
             } else if ($this.attr('data-pokemon') == 'wishiwashi') {
                 $this.attr('data-default', 'wishiwashi');
                 $this.attr('data-pokemon', 'wishiwashi-school');
