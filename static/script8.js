@@ -205,8 +205,8 @@ function createFilter(type, name, inclSelectAll=true) {
  * Loads Pokémon data.
  */
 
-const DEXES = [ 'galar', 'armor', 'foreign' ];
-const DEX_NAMES = [ 'Galar', 'Isle of Armor', 'Pokémon HOME' ]
+const DEXES = [ 'galar', 'armor', 'crown', 'foreign' ];
+const DEX_NAMES = [ 'Galar', 'Isle of Armor', 'Crown Tundra', 'Pokémon HOME' ]
 
 function loadPokemon(pokemonData, typeData) {
     var $dex_container = $('#dex-container');
@@ -258,8 +258,19 @@ function loadPokemon(pokemonData, typeData) {
         var version = pokemonData[i].ver || 'sword,shield';
         var evolution = pokemonData[i].nfe ? 'nfe' : 'fe';
         var tag = (pokemonData[i].tag && pokemonData[i].tag != 'baby') ? pokemonData[i].tag : 'nonlegend';
-        var dex = (pokemonData[i].dex.armor && !pokemonData[i].dex.galar) ? 'armor' : ( pokemonData[i].dex.galar <= 400 ? 'galar' : 'foreign' );
-        var dex_no = pokemonData[i].dex.galar || pokemonData[i].dex.armor;
+        var dex;
+        if (!pokemonData[i].dex.galar) {
+            if (pokemonData[i].dex.armor) {
+                dex = 'armor';
+            } else {
+                dex = 'crown';
+            }
+        } else if ( pokemonData[i].dex.galar <= 400 ) {
+            dex = 'galar';
+        } else {
+            dex = 'foreign';
+        }
+        var dex_no = pokemonData[i].dex.galar || pokemonData[i].dex.armor || pokemonData[i].dex.crown;
         var $li = $('<li></li>')
             .attr('data-id', pokemonData[i].id)
             .attr('data-pokemon', i)
