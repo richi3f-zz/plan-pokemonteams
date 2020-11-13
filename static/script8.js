@@ -378,7 +378,7 @@ function loadType(typeData) {
         });
     });
     // Load Pokémon
-    $.getJSON('https://plan.pokemonteams.io/static/pokemon.json', pokemonData => loadPokemon(pokemonData, typeData));
+    $.getJSON('https://richi3f.github.io/plan-pokemonteams/static/pokemon.json', pokemonData => loadPokemon(pokemonData, typeData));
 }
 function filterPokemon() {
     $('.pokedex [data-pokemon]').addClass('filtered');
@@ -753,7 +753,7 @@ $(document).ready(function(){
     // Create filters
     createFilters();
     // Load types and Pokémon
-    $.getJSON('https://plan.pokemonteams.io/static/types.json', loadType);
+    $.getJSON('https://richi3f.github.io/plan-pokemonteams/static/types.json', loadType);
     $('#randomize').click(randomizeTeam);
     // Show/hide team's weaknesses
     $('#type-analysis .button').click(function(e) {
@@ -765,28 +765,6 @@ $(document).ready(function(){
     });
     // Set current URL
     $('#copy-url input').val(document.URL);
-    /* $('#take-screenshot').click(function(e) {
-        $('#loader').fadeIn();
-        var num = $('#slots li:not([data-pokemon=""])').length;
-        html2canvas(document.querySelector('#slots'), {
-            backgroundColor: null,
-            width: 192*num
-        }).then(canvas => {
-            $('#loader').fadeOut('slow');
-            //document.body.appendChild(canvas);
-            var a = document.createElement('a');
-            a.href = canvas.toDataURL('image/png');
-            if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
-                a.download = 'myteam.png';
-            } else {
-                a.target = '_blank';
-            }
-            a.click();
-            //window.open(canvas.toDataURL('image/png'), '_blank');
-
-        });
-        e.preventDefault();
-    }); */
 });
 // Copy feature
 var clipboard = new ClipboardJS('#copy-url a');
